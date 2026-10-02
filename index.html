@@ -388,7 +388,7 @@ async function loadNeighborhoodData(lat,lon,addressLabel){
     const tract=(geo.result&&geo.result.geographies&&geo.result.geographies['Census Tracts']||[])[0];
     if(!tract) throw new Error('Census tract not found');
     const state=tract.STATE, county=tract.COUNTY, tractCode=tract.TRACT;
-    const acsUrl='https://api.census.gov/data/2023/acs/acs5?get=NAME,B01003_001E,B15003_001E,B15003_022E&for=tract:'+encodeURIComponent(tractCode)+'&in=state:'+encodeURIComponent(state)+'%20county:'+encodeURIComponent(county);
+    const acsUrl='https://api.census.gov/data/2024/acs/acs5?get=NAME,B01003_001E,B15003_001E,B15003_022E&for=tract:'+encodeURIComponent(tractCode)+'&in=state:'+encodeURIComponent(state)+'%20county:'+encodeURIComponent(county);
     const rows=await fetch(acsUrl).then(r=>r.json());
     const headers=rows[0], values=rows[1];
     const data=Object.fromEntries(headers.map((h,i)=>[h,values[i]]));

@@ -382,28 +382,58 @@ function updateNeighborhoodPreview(addressLabel){
 }
 async function loadNeighborhoodData(lat,lon,addressLabel){
   const note=document.getElementById('neighborhoodDataNote');
+
   try{
-    const geoUrl='https://geocoding.geo.census.gov/geocoder/geographies/coordinates?x='+encodeURIComponent(lon)+'&y='+encodeURIComponent(lat)+'&benchmark=Public_AR_Current&vintage=Current_Current&format=json';
-    const geo=await fetch(geoUrl).then(r=>r.json());
-    const tract=(geo.result&&geo.result.geographies&&geo.result.geographies['Census Tracts']||[])[0];
-    if(!tract) throw new Error('Census tract not found');
-    const state=tract.STATE, county=tract.COUNTY, tractCode=tract.TRACT;
-    const acsUrl='https://api.census.gov/data/2024/acs/acs5?get=NAME,B01003_001E,B15003_001E,B15003_022E&for=tract:'+encodeURIComponent(tractCode)+'&in=state:'+encodeURIComponent(state)+'%20county:'+encodeURIComponent(county);
-    const rows=await fetch(acsUrl).then(r=>r.json());
-    const headers=rows[0], values=rows[1];
-    const data=Object.fromEntries(headers.map((h,i)=>[h,values[i]]));
-    const population=Number(data.B01003_001E);
-    const educationTotal=Number(data.B15003_001E), bachelors=Number(data.B15003_022E);
-    const education=educationTotal>0?Math.round((bachelors/educationTotal)*100):null;
-    const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
-    set('populationValue',Number.isFinite(population)?population.toLocaleString('en-US'):'Unavailable');
-    set('educationValue',education!==null?education+'% bachelor’s+':'Unavailable');
-    set('crimeValue','Not connected');
-    set('walkabilityValue','Not connected');
-    if(note) note.textContent='Public Census indicators loaded for the local census tract. Crime and walkability still require separate verified sources.';
+    const url='https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='
+      +encodeURIComponent(lat)
+      +'&lon='+encodeURIComponent(lon)
+      +'&zoom=18&addressdetails=1';
+
+    const result=await fetch(url,{
+      headers:{
+        'Accept':'application/json'
+      }
+    }).then(r=>{
+      if(!r.ok) throw new Error('Reverse geocoding failed');
+      return r.json();
+    });
+
+    const address=result.address||{};
+
+    const neighborhood=
+      address.neighbourhood ||
+      address.suburb ||
+      address.quarter ||
+      address.city_district ||
+      address.city ||
+      'Neighborhood unavailable';
+
+    const set=(id,val)=>{
+      const el=document.getElementById(id);
+      if(el) el.textContent=val;
+    };
+
+    set('populationValue','Unavailable');
+    set('educationValue','Unavailable');
+    set('crimeValue','Unavailable');
+    set('walkabilityValue','Unavailable');
+
+    if(note){
+      note.textContent='Neighborhood: '+neighborhood+
+        ' — '+(result.display_name||addressLabel);
+    }
+
   }catch(err){
-    ['educationValue','crimeValue','populationValue','walkabilityValue'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='Unavailable';});
-    if(note) note.textContent='Neighborhood data could not be loaded for this address. Verify the location and try again.';
+    ['educationValue','crimeValue','populationValue','walkabilityValue']
+      .forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.textContent='Unavailable';
+      });
+
+    if(note){
+      note.textContent='Neighborhood name could not be loaded for this address.';
+    }
+
     console.warn('Neighborhood data error',err);
   }
 }

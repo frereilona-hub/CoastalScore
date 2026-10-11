@@ -416,7 +416,44 @@ const neighborhood =
       if(el) el.textContent=val;
     };
 
+   
+set('populationValue','Loading...');
+try {
+    const geoUrl = 'https://geocoding.geo.census.gov/geocoder/geographies/coordinates?x='
+        + encodeURIComponent(lon)
+        + '&y=' + encodeURIComponent(lat)
+        + '&benchmark=Public_AR_Current&vintage=Current_Current&format=json';
+
+    const geoResponse = await fetch(geoUrl);
+    if (!geoResponse.ok) throw new Error('Census geocoder unavailable');
+
+    const geoData = await geoResponse.json();
+    const tract = geoData.result?.geographies?.['Census Tracts']?.[0];
+
+    if (!tract) throw new Error('Census tract not found');
+
+    const popUrl = 'https://api.census.gov/data/2024/acs/acs5?get=B01003_001E&for=tract:'
+        + tract.TRACT
+        + '&in=state:' + tract.STATE
+        + '%20county:' + tract.COUNTY;
+
+    const popResponse = await fetch(popUrl);
+    if (!popResponse.ok) throw new Error('Census population unavailable');
+
+    const popData = await popResponse.json();
+    const population = Number(popData[1][0]);
+
+    set(
+        'populationValue',
+        Number.isFinite(population) && population >= 0
+            ? population.toLocaleString('en-US')
+            : 'Unavailable'
+    );
+} catch (error) {
+    console.warn('Population data unavailable', error);
     set('populationValue','Unavailable');
+}
+
     set('educationValue','Unavailable');
     set('crimeValue','Unavailable');
     set('walkabilityValue','Unavailable');

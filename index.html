@@ -400,13 +400,16 @@ async function loadNeighborhoodData(lat,lon,addressLabel){
 
     const address=result.address||{};
 
-    const neighborhood=
-      address.neighbourhood ||
-      address.suburb ||
-      address.quarter ||
-      address.city_district ||
-      address.city ||
-      'Neighborhood unavailable';
+   
+const neighborhood =
+    address.neighbourhood ||
+    address.quarter ||
+    address.city_district ||
+    address.suburb ||
+    address.residential ||
+    address.city ||
+    'Neighborhood unavailable';
+
 
     const set=(id,val)=>{
       const el=document.getElementById(id);

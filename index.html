@@ -451,7 +451,7 @@ try {
     );
 } catch (error) {
     console.warn('Population data unavailable', error);
-    set('populationValue','Unavailable');
+   set('populationValue', error.message);
 }
 
     set('educationValue','Unavailable');

@@ -435,7 +435,7 @@ try {
     const popUrl = 'https://api.census.gov/data/2024/acs/acs5?get=B01003_001E&for=tract:'
         + tract.TRACT
         + '&in=state:' + tract.STATE
-        + '%20county:' + tract.COUNTY;
+        + '&in=county:' + tract.COUNTY;
 
     const popResponse = await fetch(popUrl);
     if (!popResponse.ok) throw new Error('Census population unavailable');

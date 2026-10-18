@@ -220,6 +220,7 @@ addAIMessage(answer,'ai');}
         returnGeometry:'false', resultRecordCount:'10'
       });
       const femaUrl = 'https://hazards.fema.gov/gis/nfhl/rest/services/public/NFHL/MapServer/28/query?' +
+       failedAt = 'FEMA flood-zone query';
       const femaResponse = await fetch(femaUrl);
       if (!femaResponse.ok) throw new Error('FEMA service unavailable (HTTP ' + femaResponse.status + ').');
       const result = await femaResponse.json();

@@ -247,8 +247,7 @@ addAIMessage(answer,'ai');}
     } catch(error) {
       status.textContent = 'Data unavailable';
       summary.textContent = 'The live check failed. No flood-risk result has been inferred.';
-      details.textContent = (error && error.message ? error.message : 'Unknown error') + ' You can still check the property on FEMA’s official map.';
-    } finally {
+details.textContent = 'Failed during ' + failedAt + ': ' + (error && error.message ? error.message : 'Unknown error') + '. You can still check the property on FEMA’s official map.';    } finally {
       button.disabled = false;
     }
   });

@@ -159,7 +159,187 @@ else if(/yield|rent|return|profit|rendement|rentabil/.test(lower)){answer='To as
 else if(/score|flood|storm|heat|climate|inond|tempête|risque/.test(lower)){answer='Treat the displayed climate scores as illustrative placeholders, not a verified assessment of the entered address. A production analysis should identify the exact property or parcel, link each indicator to its underlying source, show the data date and geographic resolution, and mark missing or uncertain evidence. For a Florida property, verify flood information with official FEMA resources and assess building-specific wind mitigation and insurance separately.'}
 else{answer='I can help structure the analysis, but this demo has no live AI model or verified property feed connected. For a useful investment review, collect the exact address/parcel, purchase price, rent evidence, insurance quote, property tax, maintenance, vacancy assumption and documented climate sources. I can then help organise the questions and calculations, while clearly distinguishing confirmed facts from assumptions.'}
 addAIMessage(answer,'ai');}
+// COASTALSCORE — LIVE FEMA FLOOD-ZONE SCREENING
+(function () {
+  const analysis = document.getElementById('analysis');
+  if (!analysis || document.getElementById('femaLivePanel')) return;
 
+  const panel = document.createElement('div');
+  panel.id = 'femaLivePanel';
+  panel.className = 'card';
+  panel.style.margin = '18px 0';
+  panel.innerHTML = `
+    <div class="card-head">
+      <div>
+        <h3>Live FEMA flood-zone screening</h3>
+        <p>Official flood-hazard data lookup</p>
+      </div>
+      <span class="tag gold" id="femaStatus">Not checked</span>
+    </div>
+    <div class="card-body">
+      <p id="femaSummary" class="sub">
+        Enter a Florida property address above, then run the check.
+      </p>
+      <div id="femaDetails"
+           style="font-size:13px;line-height:1.7;overflow-wrap:anywhere">
+      </div>
+      <button class="btn primary" id="femaRunBtn" type="button">
+        Check live FEMA data ↗
+      </button>
+      <a class="btn" href="https://msc.fema.gov/portal/home"
+         target="_blank" rel="noopener">
+        Official FEMA map ↗
+      </a>
+      <p class="footnote" style="margin-top:12px">
+        Point-based screening only. This is not an insurance determination
+        or a guarantee of whether a building will flood. No result, or no
+        matching polygon, does not mean zero risk.
+      </p>
+    </div>`;
+
+  const firstColumns = analysis.querySelector('.two-col');
+  if (firstColumns) {
+    analysis.insertBefore(panel, firstColumns);
+  } else {
+    analysis.appendChild(panel);
+  }
+
+  const status = document.getElementById('femaStatus');
+  const summary = document.getElementById('femaSummary');
+  const details = document.getElementById('femaDetails');
+  const button = document.getElementById('femaRunBtn');
+
+  function safeText(value) {
+    return String(value == null || value === '' ? 'Not specified' : value)
+      .replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;',
+        '"': '&quot;', "'": '&#39;'
+      }[c]));
+  }
+
+  button.addEventListener('click', async function () {
+    const address = (
+      document.getElementById('analysisAddress')?.value || ''
+    ).trim();
+
+    if (!address) {
+      status.textContent = 'Address needed';
+      summary.textContent = 'Enter a property address above first.';
+      return;
+    }
+
+    button.disabled = true;
+    status.textContent = 'Checking…';
+    summary.textContent = 'Matching the address and querying FEMA…';
+    details.textContent = '';
+
+    try {
+      // Step 1: geocode the address
+      const geocodeURL =
+        'https://nominatim.openstreetmap.org/search?' +
+        new URLSearchParams({
+          q: address,
+          format: 'jsonv2',
+          limit: '1',
+          countrycodes: 'us'
+        });
+
+      const geocodeResponse = await fetch(geocodeURL, {
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (!geocodeResponse.ok) {
+        throw new Error('Address lookup unavailable (HTTP ' +
+          geocodeResponse.status + ').');
+      }
+
+      const places = await geocodeResponse.json();
+
+      if (!places.length) {
+        throw new Error(
+          'Address not found. Include street, city, Florida and ZIP code.'
+        );
+      }
+
+      const lat = Number(places[0].lat);
+      const lon = Number(places[0].lon);
+
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+        throw new Error('The address service returned invalid coordinates.');
+      }
+
+      // Step 2: query FEMA National Flood Hazard Layer, layer 28
+      const femaURL =
+        'https://hazards.fema.gov/arcgis/rest/services/public/' +
+        'NFHL/MapServer/28/query?' +
+        new URLSearchParams({
+          f: 'json',
+          where: '1=1',
+          geometry: lon + ',' + lat,
+          geometryType: 'esriGeometryPoint',
+          inSR: '4326',
+          spatialRel: 'esriSpatialRelIntersects',
+          outFields: 'FLD_ZONE,SFHA_TF,ZONE_SUBTY,DFIRM_ID',
+          returnGeometry: 'false',
+          resultRecordCount: '10'
+        });
+
+      const response = await fetch(femaURL);
+
+      if (!response.ok) {
+        throw new Error('FEMA lookup unavailable (HTTP ' +
+          response.status + ').');
+      }
+
+      const result = await response.json();
+
+      if (result.error) {
+        throw new Error(result.error.message || 'FEMA returned an error.');
+      }
+
+      const features = result.features || [];
+      const checkedAt = new Date().toLocaleString();
+
+      status.textContent = 'FEMA response received';
+      summary.textContent =
+        'Matched address: ' + places[0].display_name;
+
+      if (features.length === 0) {
+        details.innerHTML =
+          '<p><strong>No matching flood-zone polygon was returned.</strong>' +
+          ' This does not mean the property has no flood risk.</p>';
+      } else {
+        details.innerHTML = features.map((feature, index) => {
+          const a = feature.attributes || {};
+          return `
+            <div style="border-top:1px solid #dfe6ec;padding:10px 0">
+              <strong>FEMA map feature ${index + 1}</strong><br>
+              Flood zone: <strong>${safeText(a.FLD_ZONE)}</strong><br>
+              Special flood hazard area: ${safeText(a.SFHA_TF)}<br>
+              Zone subtype: ${safeText(a.ZONE_SUBTY)}<br>
+              FEMA map identifier: ${safeText(a.DFIRM_ID)}
+            </div>`;
+        }).join('');
+      }
+
+      details.innerHTML +=
+        '<p class="footnote">Source: FEMA National Flood Hazard Layer, ' +
+        'Flood Hazard Zones (layer 28). Checked: ' +
+        safeText(checkedAt) + '.</p>';
+
+    } catch (error) {
+      status.textContent = 'Data unavailable';
+      summary.textContent =
+        'The live check failed. No flood-risk result has been inferred.';
+      details.textContent =
+        (error && error.message ? error.message : 'Unknown error') +
+        ' You can still check the property on FEMA’s official map.';
+    } finally {
+      button.disabled = false;
+    }
+  });
+})();
 </script>
+
 <!-- Financial sandbox can be added as a next iteration; this first release prioritises the product's core navigation and decision architecture. -->
 </body></html>

@@ -72,6 +72,19 @@
    <div class="heading-row"><div><div class="eyebrow">Property intelligence</div><h1 class="h-title">Property analysis</h1><p class="sub">Build a structured view of one asset: location, climate exposure assumptions and financial resilience.</p></div><button class="btn" onclick="window.print()">Print this view ↗</button></div>
    <div class="search-panel"><span class="search-icon">⌕</span><input id="analysisAddress" placeholder="Enter property address" value="1200 Brickell Avenue, Miami, FL"><button class="btn primary" onclick="analyzeAddress(true)">Load property →</button></div>
    <div class="card" style="margin-bottom:18px"><div class="card-head"><div><div class="eyebrow">Selected asset</div><div class="address-title" id="analysisTitle">1200 Brickell Avenue, Miami, FL</div><div class="property-meta" id="analysisMeta">Miami-Dade County · Florida · USA</div></div><span class="tag gold">Demo profile</span></div><div class="card-body"><div class="metrics" style="margin-bottom:0"><div class="metric-card" style="background:#f8fafb;border-radius:9px"><div class="metric-label">Exposure index</div><div class="metric-value">72/100</div><div class="metric-note">Illustrative</div></div><div class="metric-card" style="background:#f8fafb;border-radius:9px"><div class="metric-label">Flood exposure</div><div class="metric-value">84/100</div><div class="metric-note">Not verified</div></div><div class="metric-card" style="background:#f8fafb;border-radius:9px"><div class="metric-label">Data confidence</div><div class="metric-value" style="font-size:20px">Not rated</div><div class="metric-note">Source pipeline not connected</div></div><div class="metric-card" style="background:#f8fafb;border-radius:9px"><div class="metric-label">Last validated</div><div class="metric-value" style="font-size:20px">—</div><div class="metric-note">No validation timestamp</div></div></div></div></div>
+   <div class="card" id="femaLivePanel" style="margin:0 0 18px">
+    <div class="card-head"><div><h3>Live FEMA flood-zone screening</h3><p>Official flood hazard data · address-based point check</p></div><span class="tag gold" id="femaStatus">Not checked</span></div>
+    <div class="card-body">
+     <p class="sub" id="femaSummary">Enter a Florida property address above, then run the check. No flood result is assumed until the official service responds.</p>
+     <div id="femaDetails" style="font-size:12px;line-height:1.7;overflow-wrap:anywhere;margin-top:12px"></div>
+     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+      <button class="btn primary" id="femaRunBtn" type="button">Check live FEMA data ↗</button>
+      <a class="btn" href="https://msc.fema.gov/portal/home" target="_blank" rel="noopener">Official FEMA map ↗</a>
+      <a class="btn" href="https://coast.noaa.gov/slr/" target="_blank" rel="noopener">NOAA sea-level viewer ↗</a>
+     </div>
+     <p class="footnote">Screening only: an address point may not match the building footprint or parcel. This is not an insurance determination, elevation certificate, or flood prediction. No matching polygon does not mean zero risk. Confirm the result on FEMA’s official map.</p>
+    </div>
+   </div>
    <div class="two-col"><div class="card"><div class="card-head"><div><h3>Risk register</h3><p>Use this checklist to organise due diligence</p></div></div><div class="card-body"><div class="table-wrap"><table class="data-table"><thead><tr><th>Risk factor</th><th>Current status</th><th>Evidence needed</th></tr></thead><tbody><tr><td><strong>Flood zone</strong><span class="table-muted">Riverine / coastal</span></td><td><span class="tag gold">Unverified</span></td><td>Official FEMA map panel</td></tr><tr><td><strong>Elevation</strong><span class="table-muted">Building / parcel</span></td><td><span class="tag gray">Missing</span></td><td>Survey or elevation certificate</td></tr><tr><td><strong>Wind / storm</strong><span class="table-muted">Building resilience</span></td><td><span class="tag gray">Missing</span></td><td>Roof age, mitigation inspection</td></tr><tr><td><strong>Insurance</strong><span class="table-muted">Annual premium</span></td><td><span class="tag gray">User input</span></td><td>Written quote and deductible</td></tr><tr><td><strong>Heat</strong><span class="table-muted">Long-term exposure</span></td><td><span class="tag gray">Not connected</span></td><td>Documented local climate dataset</td></tr></tbody></table></div></div></div>
    <div class="card"><div class="card-head"><div><h3>Decision checklist</h3><p>Before acquisition</p></div></div><div class="card-body"><div class="insight"><div class="insight-icon">1</div><div><strong>Confirm property identity</strong><p>Parcel ID, exact address and building type.</p></div></div><div class="insight"><div class="insight-icon">2</div><div><strong>Verify primary sources</strong><p>Record dataset, retrieval date, resolution and limits.</p></div></div><div class="insight"><div class="insight-icon">3</div><div><strong>Quantify the financial effect</strong><p>Compare base case with higher insurance and mitigation spend.</p></div></div><div class="notice">This version does not yet retrieve verified parcel-level risk data. Do not use the sample score to make a purchase decision.</div></div></div></div>
   </section>
@@ -134,7 +147,7 @@
   <section class="page" id="methodology">
    <div class="heading-row"><div><div class="eyebrow">Transparency by design</div><h1 class="h-title">Methodology & data</h1><p class="sub">Professional risk intelligence needs traceable sources, dates, confidence levels and clear limitations—not just a score.</p></div></div>
    <div class="method-grid"><div class="card method"><div class="number">01 / SOURCE</div><h3>Document the evidence</h3><p>Every metric should display the source organisation, dataset name, retrieval date, geographic resolution and direct source link.</p></div><div class="card method"><div class="number">02 / CONFIDENCE</div><h3>Show what is known</h3><p>Separate verified property data from neighbourhood proxies, model estimates, user inputs and missing information.</p></div><div class="card method"><div class="number">03 / DECISION</div><h3>Translate risk into diligence</h3><p>Connect exposure indicators to follow-up actions and financial scenarios without presenting correlation as a guarantee.</p></div></div>
-   <div class="card" style="margin-top:18px"><div class="card-head"><div><h3>Data connection register</h3><p>Current status of this prototype</p></div><span class="tag gold">Not production-ready</span></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Data category</th><th>Prototype status</th><th>Production requirement</th></tr></thead><tbody><tr><td><strong>Property geocoding</strong></td><td><span class="tag gray">Not connected in this edition</span></td><td>Validated address / parcel match</td></tr><tr><td><strong>Flood zone</strong></td><td><span class="tag gray">Not verified</span></td><td>Official FEMA source, map panel, date</td></tr><tr><td><strong>Elevation</strong></td><td><span class="tag gray">Not connected</span></td><td>Parcel/building-level elevation evidence</td></tr><tr><td><strong>Storm / heat / coastal</strong></td><td><span class="tag gray">Illustrative scores only</span></td><td>Named datasets, methodology and resolution</td></tr><tr><td><strong>Insurance premium</strong></td><td><span class="tag gray">Manual assumption</span></td><td>Property-specific quote; coverage and deductible</td></tr><tr><td><strong>Rental economics</strong></td><td><span class="tag gray">Manual assumptions</span></td><td>Current rent comps and operating expenses</td></tr></tbody></table></div><div class="card-body"><div class="notice">Important: the current version is a product-design prototype. Scores and sample portfolio figures are not live, verified, or suitable for underwriting. The next build should connect official data sources and add citations at the metric level.</div></div></div>
+   <div class="card" style="margin-top:18px"><div class="card-head"><div><h3>Data connection register</h3><p>Current status of this prototype</p></div><span class="tag gold">Not production-ready</span></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Data category</th><th>Prototype status</th><th>Production requirement</th></tr></thead><tbody><tr><td><strong>Address geocoding</strong></td><td><span class="tag gold">Live address lookup attempted</span></td><td>Check address match and parcel identity</td></tr><tr><td><strong>Flood zone</strong></td><td><span class="tag gold">Live point screening available</span></td><td>Confirm location, map panel and property-level determination</td></tr><tr><td><strong>Elevation</strong></td><td><span class="tag gray">Not connected</span></td><td>Parcel/building-level elevation evidence</td></tr><tr><td><strong>Storm / heat / coastal</strong></td><td><span class="tag gray">Illustrative scores only</span></td><td>Named datasets, methodology and resolution</td></tr><tr><td><strong>Insurance premium</strong></td><td><span class="tag gray">Manual assumption</span></td><td>Property-specific quote; coverage and deductible</td></tr><tr><td><strong>Rental economics</strong></td><td><span class="tag gray">Manual assumptions</span></td><td>Current rent comps and operating expenses</td></tr></tbody></table></div><div class="card-body"><div class="notice">Important: the current version is a product-design prototype. Scores and sample portfolio figures are not live, verified, or suitable for underwriting. The next build should connect official data sources and add citations at the metric level.</div></div></div>
   </section>
  </div>
 </main>
@@ -159,187 +172,86 @@ else if(/yield|rent|return|profit|rendement|rentabil/.test(lower)){answer='To as
 else if(/score|flood|storm|heat|climate|inond|tempête|risque/.test(lower)){answer='Treat the displayed climate scores as illustrative placeholders, not a verified assessment of the entered address. A production analysis should identify the exact property or parcel, link each indicator to its underlying source, show the data date and geographic resolution, and mark missing or uncertain evidence. For a Florida property, verify flood information with official FEMA resources and assess building-specific wind mitigation and insurance separately.'}
 else{answer='I can help structure the analysis, but this demo has no live AI model or verified property feed connected. For a useful investment review, collect the exact address/parcel, purchase price, rent evidence, insurance quote, property tax, maintenance, vacancy assumption and documented climate sources. I can then help organise the questions and calculations, while clearly distinguishing confirmed facts from assumptions.'}
 addAIMessage(answer,'ai');}
-// COASTALSCORE — LIVE FEMA FLOOD-ZONE SCREENING
-(function () {
-  const analysis = document.getElementById('analysis');
-  if (!analysis || document.getElementById('femaLivePanel')) return;
 
-  const panel = document.createElement('div');
-  panel.id = 'femaLivePanel';
-  panel.className = 'card';
-  panel.style.margin = '18px 0';
-  panel.innerHTML = `
-    <div class="card-head">
-      <div>
-        <h3>Live FEMA flood-zone screening</h3>
-        <p>Official flood-hazard data lookup</p>
-      </div>
-      <span class="tag gold" id="femaStatus">Not checked</span>
-    </div>
-    <div class="card-body">
-      <p id="femaSummary" class="sub">
-        Enter a Florida property address above, then run the check.
-      </p>
-      <div id="femaDetails"
-           style="font-size:13px;line-height:1.7;overflow-wrap:anywhere">
-      </div>
-      <button class="btn primary" id="femaRunBtn" type="button">
-        Check live FEMA data ↗
-      </button>
-      <a class="btn" href="https://msc.fema.gov/portal/home"
-         target="_blank" rel="noopener">
-        Official FEMA map ↗
-      </a>
-      <p class="footnote" style="margin-top:12px">
-        Point-based screening only. This is not an insurance determination
-        or a guarantee of whether a building will flood. No result, or no
-        matching polygon, does not mean zero risk.
-      </p>
-    </div>`;
 
-  const firstColumns = analysis.querySelector('.two-col');
-  if (firstColumns) {
-    analysis.insertBefore(panel, firstColumns);
-  } else {
-    analysis.appendChild(panel);
-  }
-
+// Live address-to-FEMA flood-zone screening for the Premium edition.
+(function initFemaLiveScreening(){
+  const button = document.getElementById('femaRunBtn');
+  if (!button) return;
   const status = document.getElementById('femaStatus');
   const summary = document.getElementById('femaSummary');
   const details = document.getElementById('femaDetails');
-  const button = document.getElementById('femaRunBtn');
 
   function safeText(value) {
     return String(value == null || value === '' ? 'Not specified' : value)
-      .replace(/[&<>"']/g, c => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;',
-        '"': '&quot;', "'": '&#39;'
-      }[c]));
+      .replace(/[&<>"']/g, function(c) {
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+      });
   }
 
-  button.addEventListener('click', async function () {
-    const address = (
-      document.getElementById('analysisAddress')?.value || ''
-    ).trim();
-
+  button.addEventListener('click', async function(){
+    const address = (document.getElementById('analysisAddress')?.value || '').trim();
     if (!address) {
       status.textContent = 'Address needed';
-      summary.textContent = 'Enter a property address above first.';
+      summary.textContent = 'Enter the property address above first.';
       return;
     }
-
     button.disabled = true;
     status.textContent = 'Checking…';
-    summary.textContent = 'Matching the address and querying FEMA…';
+    summary.textContent = 'Matching the address and querying the official FEMA flood-hazard layer…';
     details.textContent = '';
-
     try {
-      // Step 1: geocode the address
-      const geocodeURL =
-        'https://nominatim.openstreetmap.org/search?' +
-        new URLSearchParams({
-          q: address,
-          format: 'jsonv2',
-          limit: '1',
-          countrycodes: 'us'
-        });
-
-      const geocodeResponse = await fetch(geocodeURL, {
-        headers: { 'Accept': 'application/json' }
+      const geoUrl = 'https://nominatim.openstreetmap.org/search?' + new URLSearchParams({
+        q: address, format: 'jsonv2', limit: '1', countrycodes: 'us'
       });
+      const geoResponse = await fetch(geoUrl, {headers:{'Accept':'application/json'}});
+      if (!geoResponse.ok) throw new Error('Address lookup unavailable (HTTP ' + geoResponse.status + ').');
+      const places = await geoResponse.json();
+      if (!places.length) throw new Error('Address not found. Include street, city, Florida and ZIP code.');
+      const lat = Number(places[0].lat), lon = Number(places[0].lon);
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) throw new Error('The address service returned invalid coordinates.');
 
-      if (!geocodeResponse.ok) {
-        throw new Error('Address lookup unavailable (HTTP ' +
-          geocodeResponse.status + ').');
-      }
-
-      const places = await geocodeResponse.json();
-
-      if (!places.length) {
-        throw new Error(
-          'Address not found. Include street, city, Florida and ZIP code.'
-        );
-      }
-
-      const lat = Number(places[0].lat);
-      const lon = Number(places[0].lon);
-
-      if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-        throw new Error('The address service returned invalid coordinates.');
-      }
-
-      // Step 2: query FEMA National Flood Hazard Layer, layer 28
-      const femaURL =
-        'https://hazards.fema.gov/arcgis/rest/services/public/' +
-        'NFHL/MapServer/28/query?' +
-        new URLSearchParams({
-          f: 'json',
-          where: '1=1',
-          geometry: lon + ',' + lat,
-          geometryType: 'esriGeometryPoint',
-          inSR: '4326',
-          spatialRel: 'esriSpatialRelIntersects',
-          outFields: 'FLD_ZONE,SFHA_TF,ZONE_SUBTY,DFIRM_ID',
-          returnGeometry: 'false',
-          resultRecordCount: '10'
-        });
-
-      const response = await fetch(femaURL);
-
-      if (!response.ok) {
-        throw new Error('FEMA lookup unavailable (HTTP ' +
-          response.status + ').');
-      }
-
-      const result = await response.json();
-
-      if (result.error) {
-        throw new Error(result.error.message || 'FEMA returned an error.');
-      }
-
-      const features = result.features || [];
-      const checkedAt = new Date().toLocaleString();
+      const query = new URLSearchParams({
+        f:'json', where:'1=1', geometry:lon+','+lat,
+        geometryType:'esriGeometryPoint', inSR:'4326',
+        spatialRel:'esriSpatialRelIntersects',
+        outFields:'FLD_ZONE,SFHA_TF,ZONE_SUBTY,DFIRM_ID',
+        returnGeometry:'false', resultRecordCount:'10'
+      });
+      const femaUrl = 'https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28/query?' + query;
+      const femaResponse = await fetch(femaUrl);
+      if (!femaResponse.ok) throw new Error('FEMA service unavailable (HTTP ' + femaResponse.status + ').');
+      const result = await femaResponse.json();
+      if (result.error) throw new Error(result.error.message || 'FEMA returned an error.');
 
       status.textContent = 'FEMA response received';
-      summary.textContent =
-        'Matched address: ' + places[0].display_name;
-
-      if (features.length === 0) {
-        details.innerHTML =
-          '<p><strong>No matching flood-zone polygon was returned.</strong>' +
-          ' This does not mean the property has no flood risk.</p>';
+      summary.textContent = 'Address matched: ' + (places[0].display_name || address);
+      const queriedAt = new Date().toLocaleString();
+      const features = result.features || [];
+      if (!features.length) {
+        details.innerHTML = '<div class="notice"><strong>No matching flood-zone polygon was returned.</strong> This does not mean there is no flood risk. Verify the location directly on FEMA’s official map.</div>';
       } else {
-        details.innerHTML = features.map((feature, index) => {
+        details.innerHTML = features.map(function(feature, index){
           const a = feature.attributes || {};
-          return `
-            <div style="border-top:1px solid #dfe6ec;padding:10px 0">
-              <strong>FEMA map feature ${index + 1}</strong><br>
-              Flood zone: <strong>${safeText(a.FLD_ZONE)}</strong><br>
-              Special flood hazard area: ${safeText(a.SFHA_TF)}<br>
-              Zone subtype: ${safeText(a.ZONE_SUBTY)}<br>
-              FEMA map identifier: ${safeText(a.DFIRM_ID)}
-            </div>`;
+          return '<div style="border-top:1px solid var(--line);padding:10px 0">' +
+            '<strong>FEMA map feature ' + (index + 1) + '</strong><br>' +
+            'Flood zone: <strong>' + safeText(a.FLD_ZONE) + '</strong><br>' +
+            'Special Flood Hazard Area flag: ' + safeText(a.SFHA_TF) + '<br>' +
+            'Zone subtype: ' + safeText(a.ZONE_SUBTY) + '<br>' +
+            'FEMA map identifier: ' + safeText(a.DFIRM_ID) + '</div>';
         }).join('');
       }
-
-      details.innerHTML +=
-        '<p class="footnote">Source: FEMA National Flood Hazard Layer, ' +
-        'Flood Hazard Zones (layer 28). Checked: ' +
-        safeText(checkedAt) + '.</p>';
-
-    } catch (error) {
+      details.innerHTML += '<p class="footnote">Source: FEMA National Flood Hazard Layer, Flood Hazard Zones (layer 28). Checked: ' + safeText(queriedAt) + '.</p>';
+    } catch(error) {
       status.textContent = 'Data unavailable';
-      summary.textContent =
-        'The live check failed. No flood-risk result has been inferred.';
-      details.textContent =
-        (error && error.message ? error.message : 'Unknown error') +
-        ' You can still check the property on FEMA’s official map.';
+      summary.textContent = 'The live check failed. No flood-risk result has been inferred.';
+      details.textContent = (error && error.message ? error.message : 'Unknown error') + ' You can still check the property on FEMA’s official map.';
     } finally {
       button.disabled = false;
     }
   });
 })();
-</script>
 
+</script>
 <!-- Financial sandbox can be added as a next iteration; this first release prioritises the product's core navigation and decision architecture. -->
 </body></html>

@@ -219,9 +219,11 @@ addAIMessage(answer,'ai');}
         outFields:'FLD_ZONE,SFHA_TF,ZONE_SUBTY,DFIRM_ID',
         returnGeometry:'false', resultRecordCount:'10'
       });
-      const femaUrl = 'https://hazards.fema.gov/gis/nfhl/rest/services/public/NFHL/MapServer/28/query?' +
-       failedAt = 'FEMA flood-zone query';
-      const femaResponse = await fetch(femaUrl);
+     
+failedAt = 'FEMA flood-zone query';
+const femaUrl = 'https://hazards.fema.gov/gis/nfhl/rest/services/public/NFHL/MapServer/28/query?' + query.toString();
+const femaResponse = await fetch(femaUrl);
+
       if (!femaResponse.ok) throw new Error('FEMA service unavailable (HTTP ' + femaResponse.status + ').');
       const result = await femaResponse.json();
       if (result.error) throw new Error(result.error.message || 'FEMA returned an error.');
